@@ -86,10 +86,11 @@ class SpeedEstimator:
 
     # function for creating a log file, if it does not exist.
     def createLogFileIfNotExist(self):
+        print(self.conf["output_path"])
         # if the log file has not been created or opened
         if self.logFile is None:
             # build the log file path and create/open the log file
-            self.logPath = os.path.join(self.conf["output_path"], self.conf["csv_name"])
+            logPath = os.path.join(self.conf["output_path"], self.conf["csv_name"])
             self.logFile = open(logPath, mode="a")
 
             # set the file pointer to end of the file
@@ -101,6 +102,7 @@ class SpeedEstimator:
                 self.logFile.write("Year,Month,Day,Time,Speed (in MPH),ImageID\n")
 
     # function for determining the type of algorithm to use in detecting
+    # function for determining the type of algorithm to use in detecting
     # vehicle speed.
     def runComputationallyTaskingAlgoIfBasicAlgoFails(self):
         # check to see if we should run a more computationally expensive
@@ -111,7 +113,7 @@ class SpeedEstimator:
 
             # convert the frame to a blob and pass the blob through the
             # network and obtain the detections
-            blob = cv2.dnn.blobFromImage(frame, size=(300, 300), ddepth=cv2.CV_8U)
+            blob = cv2.dnn.blobFromImage(self.frame, size=(300, 300), ddepth=cv2.CV_8U)
             self.net.setInput(blob, scalefactor=1.0 / 127.5, mean=[127.5, 127.5, 127.5])
             detections = self.net.forward()
 
@@ -206,7 +208,7 @@ class SpeedEstimator:
             # either (1) our object detector or (2) the correlation trackers
             rects = []
 
-            runComputationallyTaskingAlgoIfBasicAlgoFails()
+            self.runComputationallyTaskingAlgoIfBasicAlgoFails()
 
             objects = self.ct.update(self.rects)
 
@@ -439,6 +441,7 @@ class SpeedEstimator:
             print("[INFO] elapsed time: {:.2f}".format(self.fps.elapsed()))
             print("[INFO] approx. FPS: {:.2f}".format(self.fps.fps()))
 
+
     def closeLogFile(self):
         # check if the log file object exists, if it does, then close it
         if self.logFile is not None:
@@ -463,11 +466,14 @@ class SpeedEstimator:
         self.closeLogFile()
 
         # destroying all used resources
-        destroyUsedResources()
+        self.destroyUsedResources()
+        
+
 
 
 # creating speed estimator object.
-estimator = SpeedEstimator()
+videoSource = easygui.fileopenbox()
+estimator = SpeedEstimator(keys, videoSource)
 
 # calling the main function
 estimator.main()
