@@ -206,7 +206,7 @@ class SpeedEstimator:
 
             # initialize our list of bounding box rectangles returned by
             # either (1) our object detector or (2) the correlation trackers
-            rects = []
+            self.rects = []
 
             self.runComputationallyTaskingAlgoIfBasicAlgoFails()
 
