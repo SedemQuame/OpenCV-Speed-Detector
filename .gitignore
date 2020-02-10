@@ -1,1 +1,5 @@
 /sample_data
+/__pycache__
+keys.py
+config
+*.jpg

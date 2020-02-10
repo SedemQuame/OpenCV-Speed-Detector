@@ -27,7 +27,7 @@ keys = {
 	# real world distance in meters
 	"distance": 16,
 	# speed limit in mph
-	"speed_limit": 17,
+	"speed_limit": 1,
 	# flag indicating if the frame must be displayed
 	"display": True,
 	# path the object detection model
@@ -37,7 +37,7 @@ keys = {
 	# flag used to check if dropbox is to be used and dropbox access
 	# token
 	"use_dropbox": False,
-    "user_cloudinary": True,
+    "use_cloudinary": True,
 	"dropbox_access_token": "YOUR_DROPBOX_APP_ACCESS_TOKEN",
 	# output directory and csv file name
 	"output_path": "output",

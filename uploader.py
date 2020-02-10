@@ -1,6 +1,6 @@
 """
-Description: A python script, responsible for uploading image/video capture to the cloudinary storage platform,
-and returning some meta data such as the url at which the asset is stored at.
+Description: A python script, responsible for uploading captured images/videos to the cloudinary storage platform,
+and returns some meta data such as the url at which the asset is stored at.
 Author: Sedem Quame Amekpewu
 Date: Monday, 3rd February, 2020
 """
@@ -12,17 +12,23 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 import uuid
+import pprint
+
+
 
 class assetUploader:
     def __init__(self, keys, video_url):
         self.keys = keys
-        self.video_local_url = video_url
+        self.asset_url = video_url
+        print("INNIT FUNCTION")
     
     def generateUUID(self):
         uui = uuid.uuid4()
         return("video_" + str(uui.hex))
+        print("GENERATING UUID")
 
-    def cloudinaryUploader(self):    
+    def fileUploader(self):    
+        print("IN FILE UPLOADER")
         uuid = self.generateUUID()
 
         cloudinary.config( 
@@ -31,19 +37,29 @@ class assetUploader:
         api_secret = json.loads(self.keys.json_string)["CLOUDINARY_SECRET"]
         )
 
-        response = cloudinary.uploader.upload_large(self.video_local_url, 
-        resource_type = "video",
-        public_id = "maakye_wo/" + uuid,
-        chunk_size = 6000000,
-        eager = [
-            { "width": 300, "height": 300, "crop": "pad", "audio_codec": "none"},
-            { "width": 160, "height": 100, "crop": "crop", "gravity": "south",
-                "audio_codec": "none"}],
-        #   eager_async = true,
-        eager_notification_url = "https://mysite.example.com/notify_endpoint")
+        print("GETTING A RESPONSE")
+
+        response =  cloudinary.uploader.upload_large(self.asset_url, 
+                    resource_type = "video",
+                    public_id = "maakye_wo/" + uuid,
+                    chunk_size = 6000000,
+                    eager = [
+                        { "width": 300, "height": 300, "crop": "pad", "audio_codec": "none"},
+                        { "width": 160, "height": 100, "crop": "crop", "gravity": "south",
+                            "audio_codec": "none"}],
+                    eager_async = True,
+                    eager_notification_url = "https://mysite.example.com/notify_endpoint")
+        print("File uploaded successfully.")
         return(response)
 
 
-# Getting the url, of the uploader video asset.
-# uploadedVideoUrl = assetUploader(keys).cloudinaryUploader()
-# print(uploadedVideoUrl)
+# uploadscript = assetUploader(keys, "sample_data/cars1.mp4")
+# uploadscript.fileUploader()
+
+
+# Exceptions to handle.
+# 1. NewConnectionError
+# 2. MaxRetryError
+# 3. cloudinary.exceptions.Error
+# 4. FileNotFoundError
+

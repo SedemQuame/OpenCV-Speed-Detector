@@ -7,6 +7,7 @@ from imutils.io import TempFile
 from imutils.video import FPS
 from datetime import datetime
 from threading import Thread
+# import bundler
 import numpy as np
 import argparse
 import dropbox
@@ -171,11 +172,15 @@ class SpeedEstimator:
 
     # function for passing tempFile created, along with other
     # metadata.
-    def upload_file(tempFile, client, imageID):
+    def upload_file(self, tempFile, imageID):
         # upload the image to Dropbox and cleanup the tempory image
         print("[INFO] uploading {}...".format(imageID))
         path = "/{}.jpg".format(imageID)
-        client.files_upload(open(tempFile.path, "rb").read(), path)
+        # client.files_upload(open(tempFile.path, "rb").read(), path)
+        # infoUploader.app(self.keys, tempFile.path).main()
+        bundler.app(self.keys, "sample_data/cars1.mp4").main()
+
+        # app(self.keys, open(tempFile.path, "rb").read()).main()
         tempFile.cleanup()
 
     # program loop.
@@ -375,10 +380,8 @@ class SpeedEstimator:
                 # draw both the ID of the object and the centroid of the
                 # object on the output frame
                 text = "ID {}".format(objectID)
-                cv2.putText(self.frame, text, (centroid[0] - 10, centroid[1] - 10)
-                            , cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-                cv2.circle(self.frame, (centroid[0], centroid[1]), 4,
-                        (0, 255, 0), -1)
+                cv2.putText(self.frame, text, (centroid[0] - 10, centroid[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                cv2.circle(self.frame, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)
 
                 # check if the object has not been logged
                 if not to.logged:
@@ -393,7 +396,7 @@ class SpeedEstimator:
 
                         # check if dropbox is to be used to store the vehicle
                         # image
-                        if self.conf["use_dropbox"]:
+                        if self.conf["use_cloudinary"]:
                             # initialize the image id, and the temporary file
                             imageID = self.ts.strftime("%H%M%S%f")
                             tempFile = TempFile()
@@ -401,13 +404,14 @@ class SpeedEstimator:
 
                             # create a thread to upload the file to dropbox
                             # and start it
-                            t = Thread(target=upload_file, args=(tempFile,
-                                                                client, imageID,))
+                            t = Thread(target=self.upload_file, args=(tempFile, imageID,))
                             t.start()
+                            # t = Thread(target=app(self.keys, tempFile.path).main())
+                            # t.start()
+                            # app(keys, tempFile.path).main()
 
                             # log the event in the log file
-                            info = "{},{},{},{},{},{}\n".format(year, month,
-                                                                day, time, to.speedMPH, imageID)
+                            info = "{},{},{},{},{},{}\n".format(year, month, day, time, to.speedMPH, imageID)
                             self.logFile.write(info)
 
                         # otherwise, we are not uploading vehicle images to
