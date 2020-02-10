@@ -7,7 +7,7 @@ from imutils.io import TempFile
 from imutils.video import FPS
 from datetime import datetime
 from threading import Thread
-# import bundler
+import bundler
 import numpy as np
 import argparse
 import dropbox
@@ -178,7 +178,7 @@ class SpeedEstimator:
         path = "/{}.jpg".format(imageID)
         # client.files_upload(open(tempFile.path, "rb").read(), path)
         # infoUploader.app(self.keys, tempFile.path).main()
-        bundler.app(self.keys, "sample_data/cars1.mp4").main()
+        bundler.app(self.keys, path).main()
 
         # app(self.keys, open(tempFile.path, "rb").read()).main()
         tempFile.cleanup()
